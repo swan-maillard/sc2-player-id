@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>StarCraft II player identification</title>
+    <meta
+      name="description"
+      content="How one StarCraft II game's keystrokes become the 48 numbers we used to tell 200 players apart, with the real model results and feature importances from our INSA Lyon notebooks."
+    />
+    <meta name="theme-color" content="#0D161C" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  </head>
+  <body>
+    <header class="wrap site-header">
+      <h1>StarCraft II player identification</h1>
+      <p class="lede">
+        A class competition at INSA Lyon in early 2025: from nothing but the keystrokes of one StarCraft II game,
+        say which of 200 players played it. Benjamin Maison and I got 94.4% right on held-out games with a random forest.
+      </p>
+      <p class="links">
+        <a href="https://github.com/swan-maillard/INSA-5A-DataMining">Code of the original project</a>
+        <a href="https://swan-maillard.github.io/#work">Swan Maillard</a>
+      </p>
+    </header>
+
+    <main>
+      <section class="wrap" aria-labelledby="lab-title">
+        <h2 id="lab-title">From keystrokes to 48 numbers</h2>
+        <p class="intro">
+          Pick a game, or write your own log. The rates below are computed by a line-for-line port of our notebook's code.
+        </p>
+
+        <div class="lab-grid">
+          <div class="card visual">
+            <div class="controls">
+              <div class="field">
+                <label for="game">Game</label>
+                <select id="game"></select>
+              </div>
+              <div class="field">
+                <label for="race">Race</label>
+                <select id="race">
+                  <option>Protoss</option>
+                  <option>Terran</option>
+                  <option>Zerg</option>
+                </select>
+              </div>
+            </div>
+            <p class="source" id="source"></p>
+
+            <div class="field">
+              <label for="log">Action log, as in the dataset</label>
+              <textarea id="log" rows="3" spellcheck="false" autocomplete="off" aria-describedby="log-help log-errors"></textarea>
+              <p class="help" id="log-help">
+                Comma separated. <code>s</code> is a selection, <code>Base</code> the main building,
+                <code>hotkey32</code> is slot 3, action 2 (0 created, 1 updated, 2 used), <code>t5</code> marks 5 seconds of game time.
+              </p>
+              <p class="errors" id="log-errors" aria-live="polite"></p>
+            </div>
+
+            <div class="adders" role="group" aria-label="Add to the end of the log">
+              <button type="button" data-add="s">+ s</button>
+              <button type="button" data-add="Base">+ Base</button>
+              <button type="button" data-add="sMineral">+ sMineral</button>
+              <span class="hotkey-adder">
+                <label class="visually-hidden" for="hk-slot">Hotkey slot</label>
+                <select id="hk-slot">
+                  <option>0</option><option>1</option><option>2</option><option selected>3</option><option>4</option>
+                  <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+                </select>
+                <label class="visually-hidden" for="hk-action">Hotkey action</label>
+                <select id="hk-action">
+                  <option value="0">created</option>
+                  <option value="1">updated</option>
+                  <option value="2" selected>used</option>
+                </select>
+                <button type="button" id="add-hotkey">+ hotkey</button>
+              </span>
+              <button type="button" data-time="5">+ 5 s</button>
+              <button type="button" data-time="60">+ 1 min</button>
+              <button type="button" id="undo">Undo</button>
+              <button type="button" id="clear">Clear</button>
+            </div>
+
+            <h3>Time windows</h3>
+            <p class="help">Every marker closes a window. Each window counts for at least 1 second.</p>
+            <div id="windows"></div>
+
+            <h3>Three phases</h3>
+            <div id="phase-bar" class="phase-bar" role="img"></div>
+            <ul class="phase-legend" id="phase-legend"></ul>
+
+            <h3>The 48 features</h3>
+            <p class="help">
+              Per phase, each count is divided by the seconds counted in that phase. Pick a cell to see the sum.
+            </p>
+            <div class="race-row" id="race-cells" role="group" aria-label="Race columns"></div>
+            <table class="rates" id="rates">
+              <caption class="visually-hidden">45 rates: 15 per phase</caption>
+            </table>
+
+            <details class="full-game" id="full-game" hidden>
+              <summary>Compare with the whole game</summary>
+              <p class="help">
+                The notebook also printed some features of this game computed on its full log, which isn't public.
+                pandas only showed the first and last columns, so here are 16 of the 45 rates.
+              </p>
+              <div class="scroll-x"><table class="compare"></table></div>
+            </details>
+          </div>
+
+          <aside class="card panel" aria-labelledby="panel-title">
+            <h3 id="panel-title">What you're looking at</h3>
+            <p id="explain" class="explain" aria-live="polite"></p>
+            <div id="detail" class="detail" hidden>
+              <p class="detail-name"><code id="detail-name"></code></p>
+              <p id="detail-ranks" class="detail-ranks"></p>
+              <button type="button" id="detail-jump" class="link-button">See it in the importance chart</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="wrap" id="importance" aria-labelledby="imp-title">
+        <h2 id="imp-title">Which of the 48 the forest leaned on</h2>
+        <p class="intro">
+          This was my part of the project. Two ways to ask a random forest what it uses, on the rf v1 model.
+          The notebook only kept the plots, so the values are read back from them, to about ±0.0001.
+        </p>
+        <div class="chart-grid">
+          <div class="card">
+            <div class="controls">
+              <fieldset class="segmented">
+                <legend>Measure</legend>
+                <label><input type="radio" name="measure" value="impurity" checked /> Impurity decrease</label>
+                <label><input type="radio" name="measure" value="permutation" /> Permutation</label>
+              </fieldset>
+              <div class="field">
+                <label for="imp-order">Order</label>
+                <select id="imp-order">
+                  <option value="rank">Most important first</option>
+                  <option value="phase">Grouped by phase</option>
+                </select>
+              </div>
+              <label class="check"><input type="checkbox" id="imp-all" /> Show all 48</label>
+            </div>
+            <div id="imp-chart" class="imp-chart"></div>
+          </div>
+          <div class="card panel">
+            <h3>Reading it</h3>
+            <p id="imp-summary" aria-live="polite"></p>
+            <p class="help">
+              Impurity decrease: how much the splits on a feature tidy up the trees, normalised so the 48 add up to 1.
+              Permutation: how much accuracy on the held-out games drops when that one column is shuffled, averaged over 30 shuffles,
+              with the spread as a line.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap" id="models" aria-labelledby="models-title">
+        <h2 id="models-title">Seven models on the same split</h2>
+        <p class="intro">
+          Each notebook trained on 80% of the 3,052 training games and was scored on the same other 20%. Results as printed in the notebooks.
+          The axis starts at 85%.
+        </p>
+        <div class="chart-grid">
+          <div class="card">
+            <div class="controls">
+              <div class="field">
+                <label for="model-sort">Sort by</label>
+                <select id="model-sort">
+                  <option value="test">Held-out accuracy</option>
+                  <option value="cv">Cross-validation accuracy</option>
+                </select>
+              </div>
+              <label class="check"><input type="checkbox" id="model-cv" /> Show cross-validation</label>
+            </div>
+            <div id="model-chart" class="model-chart"></div>
+            <p class="legend" aria-hidden="true">
+              <span class="key test"></span> held-out accuracy
+              <span class="key cv"></span> best cross-validation score
+            </p>
+          </div>
+          <div class="card panel">
+            <h3>Selected model</h3>
+            <p id="model-explain" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap prose" aria-labelledby="about-title">
+        <h2 id="about-title">What you're looking at</h2>
+        <p>
+          StarCraft II is a real-time strategy game. Good players lean on hotkeys: they bind groups of units or buildings to the
+          keys 0 to 9 and jump between them dozens of times a minute. The competition gave us 3,052 games from 200 players, each one
+          a single line of tokens: <code>s</code> for a selection, <code>Base</code> for the main building, <code>hotkey32</code> for
+          "slot 3, used", and markers like <code>t5</code>, <code>t10</code>, <code>t15</code> that keep track of game time in seconds.
+        </p>
+        <p>
+          A classifier needs the same columns for every game, and these lines run from a handful of tokens to over 10,000. So we cut
+          each game at 25 minutes, split it into the windows between markers, file each window under start (first minute), early (up to
+          6 minutes) or mid (up to 25), and count per second: presses of each of the 10 hotkey slots, hotkeys created and used, and
+          selections of the base, of minerals and of anything else. That's 15 rates for 3 phases, plus the race as three 0 or 1 columns.
+        </p>
+        <p>
+          The real games aren't public: the data sat on Kaggle behind the class competition. What you can load above are the only bits
+          of real logs our notebooks printed, the first seconds of ten games and the competition's own example. That's enough to see the
+          habit, though: training games 0, 2 and 4 are all player 53, and all three create hotkey 3 within seconds.
+        </p>
+        <p>
+          The importance chart is the piece I worked on. The two measures rank things differently, but both put the first minute's
+          hotkeys near the top: how a player sets up their keys right after the game starts is close to a signature.
+        </p>
+      </section>
+    </main>
+
+    <footer class="wrap site-footer">
+      <p>
+        Ported from <a href="https://github.com/swan-maillard/INSA-5A-DataMining">INSA-5A-DataMining</a>
+        (data mining course, INSA Lyon, 2025). Built by Swan Maillard.
+      </p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
