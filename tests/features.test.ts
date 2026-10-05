@@ -64,7 +64,7 @@ describe("pasting a log", () => {
     expect(parseLog("[Base, s, s, s, Base, s, hotkey30, hotkey00]").actions).toEqual(EXAMPLES[2].actions);
   });
 
-  it("refuses tokens the notebook would crash on", () => {
+  it("refuses tokens that are not in the data format", () => {
     const parsed = parseLog("s, tea, hotkey3, s");
     expect(parsed.actions).toEqual(["s", "s"]);
     expect(parsed.errors).toHaveLength(2);

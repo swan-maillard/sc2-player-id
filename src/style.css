@@ -1,6 +1,6 @@
 :root {
   --bg: #0d161c;
-  --elevated: #121e26;
+  --raised: #121e26;
   --card: #18262f;
   --card-2: #263741;
   --border: rgba(255, 255, 255, 0.08);
@@ -168,7 +168,7 @@ code {
 }
 
 .panel {
-  background: var(--elevated);
+  background: var(--raised);
 }
 
 .panel h3 {
@@ -378,7 +378,7 @@ input[type="checkbox"] {
   border: 1px solid var(--border);
   border-radius: var(--r-m);
   padding: 8px 12px;
-  background: var(--elevated);
+  background: var(--raised);
 }
 
 .window.focus {
@@ -469,7 +469,7 @@ input[type="checkbox"] {
   top: 0;
   bottom: 0;
   margin-left: 1px;
-  background: var(--elevated);
+  background: var(--raised);
   border: 1px solid var(--control);
   border-radius: 4px;
 }
@@ -689,7 +689,7 @@ table {
 
 .imp-row:hover,
 .model-row:hover {
-  background: var(--elevated);
+  background: var(--raised);
 }
 
 .imp-row[aria-pressed="true"],

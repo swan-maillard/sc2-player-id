@@ -1,5 +1,5 @@
 // Port of the feature extraction in notebook-rf-v1.ipynb (cells 21, 28 and 29).
-// Same constants, same order of operations, same quirks.
+// Same constants and the same order of operations.
 
 export type Phase = "start" | "early" | "mid";
 export type Race = "Protoss" | "Terran" | "Zerg";
@@ -36,7 +36,7 @@ export function isTimeMarker(token: string): boolean {
   return token.startsWith("t");
 }
 
-// Python's int() on the marker. Tokens like "tx" make the notebook crash, so they are rejected before this.
+// Python's int() on the marker. parseLog only lets through markers that are t followed by digits.
 export function markerSeconds(token: string): number {
   return parseInt(token.slice(1), 10);
 }
