@@ -1,0 +1,25 @@
+{
+  "real": {
+    "train-0": ["Base", "s", "s", "s", "s", "s", "t5", "Base", "s", "hotkey30"],
+    "train-1": ["s", "Base", "s", "s", "Base", "s", "s", "Base", "s", "t5"],
+    "train-2": ["Base", "s", "s", "s", "Base", "s", "hotkey30", "hotkey00"],
+    "train-3": ["Base", "s", "s", "Base", "s", "s", "s", "t5", "Base", "s"],
+    "train-4": ["Base", "s", "s", "s", "Base", "s", "hotkey30", "hotkey00"],
+    "test-0": ["s", "s", "s", "hotkey10", "s", "hotkey60", "s", "hotkey00", "s"],
+    "test-1": ["s", "hotkey30", "hotkey00", "t5", "s", "hotkey32", "s", "hotkey32", "s"],
+    "test-2": ["Base", "s", "s", "Base", "s", "hotkey20", "hotkey30", "hotkey60", "hotkey40"],
+    "test-3": ["s", "s", "s", "s", "hotkey20", "s", "hotkey40", "t5", "t10"],
+    "test-4": ["Base", "s", "s", "Base", "s", "hotkey50", "hotkey30", "t5", "hotkey40"],
+    "data-page": ["Base", "s", "s", "s", "s", "s", "t5", "Base", "s", "hotkey30", "hotkey00", "t10", "t15"]
+  },
+  "handwritten": {
+    "empty": [],
+    "only-markers": ["t5", "t10", "t15"],
+    "idle-windows": ["s", "t5", "t10", "t15", "hotkey12", "s", "t20"],
+    "all-kinds": ["sBase", "Base", "sMineral", "SingleMineral", "s", "hotkey91", "hotkey92", "hotkey90", "hotkey71", "x", "t5"],
+    "crosses-phases": ["s", "t55", "hotkey12", "t60", "hotkey22", "s", "t65", "t355", "Base", "t360", "hotkey32", "hotkey30", "t370", "sMineral"],
+    "cut-at-1500": ["s", "t1495", "hotkey42", "t1500", "hotkey42", "s", "t1505", "s"],
+    "late-start": ["t1400", "s", "s", "t1500"],
+    "long-window": ["s", "t300", "hotkey52", "t1200", "hotkey52", "t1495"]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "sc2-player-id",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "How a StarCraft II game's keystrokes become the 48 numbers we used to tell 200 players apart.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "@fontsource/barlow": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/josefin-sans": "^5.3.0"
+  }
+}
