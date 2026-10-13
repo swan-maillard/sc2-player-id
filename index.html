@@ -6,7 +6,7 @@
     <title>StarCraft II player identification</title>
     <meta
       name="description"
-      content="How one StarCraft II game's keystrokes become the 48 numbers we used to tell 200 players apart, with the real model results and feature importances from our INSA Lyon notebooks."
+      content="A school data mining competition: guess which of 200 StarCraft II players played a game, only from their keystrokes. See how a game becomes 48 numbers, and what the models got."
     />
     <meta name="theme-color" content="#0D161C" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
@@ -14,22 +14,19 @@
   <body>
     <header class="wrap site-header">
       <h1>StarCraft II player identification</h1>
-      <p class="lede">
-        A class competition at INSA Lyon in early 2025: from nothing but the keystrokes of one StarCraft II game,
-        say which of 200 players played it. Benjamin Maison and I got 94.4% right on held-out games with a random forest.
-      </p>
-      <p class="links">
-        <a href="https://github.com/swan-maillard/INSA-5A-DataMining">Code of the original project</a>
-        <a href="https://swan-maillard.github.io/#work">Swan Maillard</a>
+      <p class="sub">
+        A data mining competition at INSA Lyon, in 2025: find which of 200 players played a game, only from their keystrokes.
+        Our best model, a random forest, got 94.4% of the held-out games right.
+        <a class="gh" href="https://github.com/swan-maillard/INSA-5A-DataMining">Code on GitHub</a>
       </p>
     </header>
 
     <main>
       <section class="wrap" aria-labelledby="lab-title">
-        <h2 id="lab-title">From keystrokes to 48 numbers</h2>
-        <p class="intro">
-          Pick a game, or write your own log. The rates below are computed by a line-for-line port of our notebook's code.
-        </p>
+        <div class="section-head">
+          <h2 id="lab-title"><span class="num">1</span>From keystrokes to 48 numbers</h2>
+          <p class="intro">Pick a game or edit the log. The numbers are computed with the same code as our notebook.</p>
+        </div>
 
         <div class="lab-grid">
           <div class="card visual">
@@ -50,11 +47,11 @@
             <p class="source" id="source"></p>
 
             <div class="field">
-              <label for="log">Action log, as in the dataset</label>
+              <label for="log">Action log</label>
               <textarea id="log" rows="3" spellcheck="false" autocomplete="off" aria-describedby="log-help log-errors"></textarea>
               <p class="help" id="log-help">
-                Comma separated. <code>s</code> is a selection, <code>Base</code> the main building,
-                <code>hotkey32</code> is slot 3, action 2 (0 created, 1 updated, 2 used), <code>t5</code> marks 5 seconds of game time.
+                <code>s</code> is a selection, <code>Base</code> the main building, <code>hotkey32</code> is slot 3, action 2
+                (0 created, 1 updated, 2 used), and <code>t5</code> means 5 seconds of game time have passed.
               </p>
               <p class="errors" id="log-errors" aria-live="polite"></p>
             </div>
@@ -84,7 +81,7 @@
             </div>
 
             <h3>Time windows</h3>
-            <p class="help">Every marker closes a window. Each window counts for at least 1 second.</p>
+            <p class="help">Each time marker closes a window. A window counts for at least 1 second.</p>
             <div id="windows"></div>
 
             <h3>Three phases</h3>
@@ -93,7 +90,7 @@
 
             <h3>The 48 features</h3>
             <p class="help">
-              Per phase, each count is divided by the seconds counted in that phase. Pick a cell to see the sum.
+              Each count is divided by the seconds of its phase. Click a cell to see the calculation.
             </p>
             <div class="race-row" id="race-cells" role="group" aria-label="Race columns"></div>
             <table class="rates" id="rates">
@@ -103,31 +100,33 @@
             <details class="full-game" id="full-game" hidden>
               <summary>Compare with the whole game</summary>
               <p class="help">
-                The notebook also printed some features of this game computed on its full log, which isn't public.
-                pandas only showed the first and last columns, so here are 16 of the 45 rates.
+                The notebook also printed the features of this game on its full log, which isn't public.
+                pandas only showed the first and last columns, so there are 16 of the 45 rates.
               </p>
               <div class="scroll-x"><table class="compare"></table></div>
             </details>
           </div>
 
           <aside class="card panel" aria-labelledby="panel-title">
-            <h3 id="panel-title">What you're looking at</h3>
+            <h3 id="panel-title">Explanation</h3>
             <p id="explain" class="explain" aria-live="polite"></p>
             <div id="detail" class="detail" hidden>
               <p class="detail-name"><code id="detail-name"></code></p>
               <p id="detail-ranks" class="detail-ranks"></p>
-              <button type="button" id="detail-jump" class="link-button">See it in the importance chart</button>
+              <button type="button" id="detail-jump" class="link-button">Show it in the importance chart</button>
             </div>
           </aside>
         </div>
       </section>
 
       <section class="wrap" id="importance" aria-labelledby="imp-title">
-        <h2 id="imp-title">Which of the 48 the forest leaned on</h2>
-        <p class="intro">
-          This was my part of the project. Two ways to ask a random forest what it uses, on the rf v1 model.
-          The notebook only kept the plots, so the values are read back from them, to about ±0.0001.
-        </p>
+        <div class="section-head">
+          <h2 id="imp-title"><span class="num">2</span>Which features the forest uses</h2>
+          <p class="intro">
+            Two ways to measure it, on the random forest v1. The notebook only kept the plots, so I read the values back
+            from them (about ±0.0001).
+          </p>
+        </div>
         <div class="chart-grid">
           <div class="card">
             <div class="controls">
@@ -148,23 +147,25 @@
             <div id="imp-chart" class="imp-chart"></div>
           </div>
           <div class="card panel">
-            <h3>Reading it</h3>
+            <h3>How to read it</h3>
             <p id="imp-summary" aria-live="polite"></p>
             <p class="help">
-              Impurity decrease: how much the splits on a feature tidy up the trees, normalised so the 48 add up to 1.
-              Permutation: how much accuracy on the held-out games drops when that one column is shuffled, averaged over 30 shuffles,
-              with the spread as a line.
+              <b>Impurity decrease</b>: how much the splits on a feature clean up the trees. The 48 values add up to 1.
+              <b>Permutation</b>: how much the accuracy drops when only this column is shuffled, averaged over 30 shuffles.
+              The line shows the spread.
             </p>
           </div>
         </div>
       </section>
 
       <section class="wrap" id="models" aria-labelledby="models-title">
-        <h2 id="models-title">Seven models on the same split</h2>
-        <p class="intro">
-          Each notebook trained on 80% of the 3,052 training games and was scored on the same other 20%. Results as printed in the notebooks.
-          The axis starts at 85%.
-        </p>
+        <div class="section-head">
+          <h2 id="models-title"><span class="num">3</span>Seven models, same split</h2>
+          <p class="intro">
+            All trained on 80% of the 3,052 training games and tested on the same other 20%, as printed in the notebooks.
+            The axis starts at 85%.
+          </p>
+        </div>
         <div class="chart-grid">
           <div class="card">
             <div class="controls">
@@ -191,37 +192,30 @@
       </section>
 
       <section class="wrap prose" aria-labelledby="about-title">
-        <h2 id="about-title">What you're looking at</h2>
+        <h2 id="about-title">About the data</h2>
         <p>
-          StarCraft II is a real-time strategy game. Good players lean on hotkeys: they bind groups of units or buildings to the
-          keys 0 to 9 and jump between them dozens of times a minute. The competition gave us 3,052 games from 200 players, each one
-          a single line of tokens: <code>s</code> for a selection, <code>Base</code> for the main building, <code>hotkey32</code> for
-          "slot 3, used", and markers like <code>t5</code>, <code>t10</code>, <code>t15</code> that keep track of game time in seconds.
+          StarCraft II is a real-time strategy game. Good players use hotkeys a lot: they bind groups of units or buildings to the
+          keys 0 to 9 and switch between them dozens of times per minute. We had 3,052 games from 200 players, each one written as
+          a single line of tokens, from a few tokens to more than 10,000.
         </p>
         <p>
-          A classifier needs the same columns for every game, and these lines run from a handful of tokens to over 10,000. So we cut
-          each game at 25 minutes, split it into the windows between markers, file each window under start (first minute), early (up to
-          6 minutes) or mid (up to 25), and count per second: presses of each of the 10 hotkey slots, hotkeys created and used, and
-          selections of the base, of minerals and of anything else. That's 15 rates for 3 phases, plus the race as three 0 or 1 columns.
+          A model needs the same columns for every game, so we cut each game at 25 minutes and split it in three phases: start
+          (first minute), early (up to 6 minutes) and mid (up to 25). In each phase we count, per second, the presses of each hotkey
+          slot, the hotkeys created and used, and the selections. That's 15 rates for 3 phases, plus 3 columns for the race.
         </p>
         <p>
-          The real games aren't public: the data sat on Kaggle behind the class competition. What you can load above are the only bits
-          of real logs our notebooks printed, the first seconds of ten games and the competition's own example. That's enough to see the
-          habit, though: training games 0, 2 and 4 are all player 53, and all three create hotkey 3 within seconds.
+          The real games were on Kaggle, behind the class competition, so they aren't here. The logs you can load above are the
+          only parts our notebooks printed: the first seconds of ten games, and the example from the competition page. It's
+          already enough to see a habit: training games 0, 2 and 4 are all player 53, and all three create hotkey 3 in the
+          first seconds.
         </p>
         <p>
-          The importance chart is the piece I worked on. The two measures rank things differently, but both put the first minute's
-          hotkeys near the top: how a player sets up their keys right after the game starts is close to a signature.
+          What surprised me the most is that both importance measures put the first minute's hotkeys near the top. The way a
+          player sets up their keys at the start of a game is almost a signature.
         </p>
       </section>
     </main>
 
-    <footer class="wrap site-footer">
-      <p>
-        Ported from <a href="https://github.com/swan-maillard/INSA-5A-DataMining">INSA-5A-DataMining</a>
-        (data mining course, INSA Lyon, 2025). Built by Swan Maillard.
-      </p>
-    </footer>
 
     <script type="module" src="/src/main.ts"></script>
   </body>
